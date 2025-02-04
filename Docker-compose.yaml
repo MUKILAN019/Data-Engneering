@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  data-engineering-postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: source_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    networks:
+      - elt_network
+
+  elt_script:
+    build:
+      context: elt
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: data-engineering-postgres
+      DB_NAME: source_db
+      DB_USER: postgres
+      DB_PASSWORD: secret
+    depends_on:
+      - data-engineering-postgres
+    networks:
+      - elt_network
+
+networks:
+  elt_network:
+    driver: bridge
