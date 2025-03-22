@@ -27,7 +27,7 @@ print("PySpark Session Initialized!")
 
 while True:
     try:
-        print("📌 Connecting to database...")
+        print("Connecting to database...")
         conn = psycopg2.connect(
             host=DB_HOST,
             port=DB_PORT, 
@@ -41,16 +41,16 @@ while True:
         cursor.execute('SELECT * FROM "Member";')
         rows = cursor.fetchall()
 
-        print("📌 Fetched Data:")
+        print("Fetched Data:")
         for row in rows:
             print(row)
 
         cursor.close()
         conn.close()
-        print("✅ Database connection closed.")
+        print("Database connection closed.")
 
-        # 📌 ETL Process Using PySpark
-        print("🚀 Extracting data from PostgreSQL using PySpark...")
+        # ETL Process Using PySpark
+        print("Extracting data from PostgreSQL using PySpark...")
 
         df = spark.read \
             .format("jdbc") \
@@ -61,13 +61,13 @@ while True:
             .option("driver", "org.postgresql.Driver") \
             .load()
 
-        print("📌 Extracted Data:")
+        print("Extracted Data:")
         df.show()
 
         # Transform: Convert mem_name to uppercase
         df_transformed = df.withColumn("MEMBER_NAME", col("mem_name"))
 
-        print("✅ Transformed Data:")
+        print("Transformed Data:")
         df_transformed.show()
 
         # Load Transformed Data into PostgreSQL
@@ -81,10 +81,10 @@ while True:
             .mode("overwrite") \
             .save()
 
-        print("✅ ETL Process Completed Successfully!")
+        print("ETL Process Completed Successfully!")
 
     except Exception as e:
         print("❌ Error:", e)
 
-    print("⏳ Waiting for 60 seconds before next run...")
+    print("Waiting for 60 seconds before next run...")
     time.sleep(60)
