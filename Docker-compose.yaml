@@ -1,29 +1,36 @@
-version: '3.8'
-
 services:
-  data-engineering-postgres:
+  my_postgres:
     image: postgres:latest
+    container_name: my_postgres
+    restart: always
     environment:
-      POSTGRES_DB: source_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "6004:5432"  
+    volumes:
+      - pg_data:/var/lib/postgresql/data
     networks:
       - elt_network
 
   elt_script:
     build:
-      context: elt
+      context: .  # Using the current directory
       dockerfile: Dockerfile
     environment:
-      DB_HOST: data-engineering-postgres
-      DB_NAME: source_db
-      DB_USER: postgres
-      DB_PASSWORD: secret
+      DB_HOST: my_postgres
+      DB_NAME: mydatabase
+      DB_USER: admin
+      DB_PASSWORD: admin123
     depends_on:
-      - data-engineering-postgres
+      - my_postgres
     networks:
       - elt_network
 
 networks:
   elt_network:
     driver: bridge
+
+volumes:
+  pg_data:
